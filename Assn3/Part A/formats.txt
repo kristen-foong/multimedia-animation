@@ -1,0 +1,2 @@
+The best format to save this in is the JPEG format. JPEG is better suited to compressiong photographs or images that do not have hard lines, sharp contrasts, or illustrations.
+JPEG works better with realistic images and photographs. GIFs support animation but have a lesser quality, and PNGs are more suited towards text-heavy graphics, drawings, or images that have fewer colors.

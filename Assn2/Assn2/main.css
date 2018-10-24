@@ -1,0 +1,341 @@
+/** fonts **/
+@font-face {
+  font-family:'gloss';
+  src:url('https://files.jcink.net/uploads/jt/Gloss_And_Bloom.ttf');
+}
+
+/** animation **/
+@keyframes bounce {
+  0% {
+    transform:translate(0px, 0px);
+  }
+  100% {
+      transform:translate(0px, 10px);
+  }
+}
+
+/** body **/
+body {
+  margin:0px;
+  padding:0px;
+  background:#333;
+}
+body::-webkit-scrollbar {
+  width:10px;
+}
+body::-webkit-scrollbar-track {
+  background:rgba(0,0,0,0.5);
+}
+body::-webkit-scrollbar-thumb {
+  background:#fff
+}
+
+/** wrapper **/
+#wrapper {
+  width:100%;
+  height:100vh;
+}
+
+/** navigation / links **/
+#navbar {
+  width:100%;
+  position:fixed;
+  top:0px; left:0px;
+  z-index:5;
+  padding:9px 0px 10px 0px;
+  text-align:center;
+  line-height:100%;
+  display:flex;
+  justify-content:space-evenly;
+  background:rgba(0,0,0,0);
+  transition:all 0.5s ease-in-out;
+}
+#navbar:hover {
+  background:rgba(0,0,0,0.3);
+}
+#navbar a {
+  color:#ccc;
+  text-decoration:none;
+  font-family:'Raleway', Arial, sans-serif;
+  font-weight:200;
+  font-size:0.9vw;
+  letter-spacing:0.5em;
+  text-transform:uppercase;
+  transition:all 0.3s ease-in-out;
+}
+#navbar a:hover {
+  color:#fff;
+}
+
+/** title **/
+#title {
+  width:100%;
+  height:55vmax;
+  position:relative;
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  align-content:center;
+  justify-content:center;
+  overflow:hidden;
+}
+
+#titlevid {
+  width:100vw;
+  height:auto;
+  filter:brightness(50%);
+  position:absolute;
+  top:0px; left:0px;
+  z-index:0;
+}
+
+#head {
+  width:100%;
+  text-align:center;
+  font-family:'gloss', Arial, sans-serif;
+  font-size:12vw;
+  text-transform:uppercase;
+  color:#fff;
+  z-index:1;
+  letter-spacing:0.2em;
+  text-shadow:0px 0px 10px rgba(0,0,0,0.5);
+  line-height:100%;
+  padding-top:60px;
+}
+#subtitle {
+  width:100%;
+  padding:15px 300px;
+  font-family:'Raleway', Arial, sans-serif;
+  font-weight:200;
+  color:#fff;
+  font-size:0.9vw;
+  text-align:center;
+  text-transform:uppercase;
+  letter-spacing:0.1em;
+  line-height:110%;
+  z-index:1;
+}
+#subtitle b {
+  font-size:1vw;
+}
+
+/** explore button **/
+#explore {
+  width:100%;
+  z-index:1;
+  text-align:center;
+  font-family:Raleway;
+  font-weight:200;
+  color:#fff;
+  font-size:1.2vw;
+  letter-spacing:1em;
+  line-height:100%;
+  margin:0px auto;
+  padding-top:60px;
+  text-transform:uppercase;
+  animation-name:bounce;
+  animation-iteration-count:infinite;
+  animation-duration:1s;
+  animation-direction:alternate;
+  animation-timing-function:ease-in-out;
+}
+#explore i {
+  padding:5px;
+  color:#fff;
+  font-size:20px;
+}
+#explore a {
+  text-decoration:none;
+  color:#fff;
+}
+
+/** music **/
+#music {
+  position:relative;
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  align-items:center;
+  align-content:center;
+}
+
+#music > div > video {
+  width:100vw;
+  height:auto;
+  filter:brightness(50%);
+  position:absolute;
+  top:0px; left:0px;
+  z-index:0;
+}
+
+/** category stylings **/
+.category {
+  width:100%;
+  height:55vmax;
+  position:relative;
+  overflow:hidden;
+  display:flex;
+  flex-wrap:no-wrap;
+  align-items:center;
+  align-content:center;
+  justify-content:center;
+}
+
+.catbreak {
+  width:17%;
+  height:100%;
+}
+
+.cattitle {
+  width:33%;
+  height:100%;
+  position:relative;
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  align-items:center;
+  align-content:center;
+  flex-grow:1;
+}
+.cattitle h1 {
+  margin:10px auto;
+  padding:0px;
+  width:100%;
+  font-family:'gloss', Arial, sans-serif;
+  font-size:8vw;
+  color:#fff;
+  text-align:center;
+  text-shadow:0px 0px 10px rgba(0,0,0,0.5);
+  line-height:100%;
+}
+.cattitle p {
+  margin:10px;
+  text-align:center;
+  font-family:Raleway;
+  font-size:0.7vw;
+  color:rgba(250,250,250,0.8);
+  text-transform:uppercase;
+  font-weight:200;
+  display:flex;
+  flex-wrap:wrap;
+  align-content:center;
+  justify-content:center;
+  align-items:center;
+  line-height:110%;
+  text-align:justify;
+}
+.cattitle b {
+  background:rgba(0,0,0,0.2);
+  padding:6px 10px 5px 10px;
+  line-height:100%;
+  margin:2px;
+  font-weight:400;
+  text-align:center;
+  letter-spacing:0.1em;
+  transition:all 0.5s ease-in-out;
+}
+.cattitle b:hover {
+  background:rgba(0,0,0,0.5);
+  color:#fff;
+}
+
+/** audio list stylings **/
+.collection {
+  width:33%;
+  height:100%;
+  display:flex;
+  flex-wrap:wrap;
+  align-content:center;
+  align-items:center;
+  justify-content:center;
+}
+.audiolist {
+  width:100%;
+  height:40%;
+  position:relative;
+  overflow:auto;
+  margin-left:10px;
+  padding-right:10px;
+}
+.audiolist::-webkit-scrollbar { width:5px; }
+.audiolist::-webkit-scrollbar-thumb {background:#fff;}
+.audiolist::-webkit-scrollbar-track {background:rgba(0,0,0,0.5);}
+
+.audio {
+  position:relative;
+  padding:10px 0px;
+  border-bottom:0.5px solid #ccc;
+  font-family:Raleway;
+  font-size:1vw;
+  font-weight:400;
+  color:#fff;
+  line-height:100%;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  display:flex;
+  flex-wrap:no-wrap;
+  justify-content:center;
+  align-items:center;
+  align-content:center;
+}
+.audio h1 {
+  margin:0px 5px;
+  text-align:left;
+  font-family:Raleway;
+  font-size:1vw;
+  font-weight:400;
+  color:#fff;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  flex-grow:1;
+}
+.audio audio {
+  width:50%;
+}
+
+@media only screen and (max-width:1000px) {
+  #title {
+    height:50vw;
+  }
+  .category {
+    flex-wrap:wrap;
+    height:50vw;
+  }
+  .catbreak {
+    width:100%;
+    height:0px;
+  }
+  .cattitle {
+    width:100%;
+    height:auto;
+    margin-top:25%;
+  }
+  .cattitle p {
+    margin:0px 25%;
+  }
+  .collection {
+    width:100%;
+    height:auto;
+    margin-bottom:25%;
+    margin-top:20px;
+  }
+  .audiolist {
+    width:50%;
+    height:150px;
+  }
+  .audio h1 {
+    font-size:0.8vw;
+  }
+}
+
+@media only screen and (max-width:700px) {
+  #navbar a {
+    font-size:15px;
+  }
+  #subtitle {
+    padding:15px 100px;
+  }
+  #explore {
+    padding-top:10px;
+  }
+}

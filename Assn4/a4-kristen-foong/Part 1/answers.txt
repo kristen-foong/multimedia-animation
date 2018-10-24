@@ -1,0 +1,6 @@
+The AEP file is smaller than the PNG file.
+
+The PNG file size is calculated by taking the amount of pixels and multiplying it by the bit depth.
+In addition, the PNG file uses a lossless algorithm, meaning that it does not lose any data and only makes the file size slightly smaller.
+
+However, for the AEP file, it does not need to encode this information.
