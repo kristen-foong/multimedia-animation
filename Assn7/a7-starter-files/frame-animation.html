@@ -17,10 +17,11 @@
 
 	<script type="text/javascript">
 
-		window.onload = function()
-		{
+
+		window.onload = function(){
 			var canvas = document.getElementById("demoCanvas");
 			var context = canvas.getContext("2d");
+
 
 			// ARRAY FOR THE FRAMES
 			var frames = [];
@@ -29,37 +30,43 @@
 			var numLoaded = 0;
 
 			// TOTAL NUMBER OF FRAMES
-			var numTotal = 9;
+			var numTotal = 16;
 
 			// KEEPS TRACK OF WHICH FRAME WE'RE ON
 			var t = 0;
 
 			// LOAD FRAMES
-			for (var i = 0;i<numTotal;i++)
-
-			{
+			for (var i = 0; i<numTotal; i++){
 				// LOAD IMAGE AND PUT IT IN ARRAY
-				var im;
-
-				im.onload = function()
-				{
+				var img = new Image();
+				if(i < 10){
+					img = "frames/beet-0000" + i + ".png";
+					frames.push(img);
+				}else{
+					img = "frames/beet-000" + i + ".png";
+					frames.push(img);
+				}
+				console.log(frames[i]);
+				img.onload = function(){
 					// COUNT HOW MANY FRAMES HAVE BEEN LOADED, AND START THE ANIMATION WHEN ALL FRAMES HAVE BEEN LOADED
+					numLoaded++;
+					if(numLoaded >= numTotal) {
+						main();
+					}
 				}
 			}
 
-			function main()
-			{
+
+			function main(){
 				startGame();
 			}
 
-			function startGame()
-			{
+			function startGame(){
 				updateGame();
 				window.requestAnimationFrame(drawGame);
 			}
 
-			function updateGame()
-			{
+			function updateGame(){
 				// GAME AND ANIMATION LOGIC GOES HERE
 				// INCREMENT TO THE NEXT FRAME, LOOP WHEN AT THE END
 
@@ -67,12 +74,18 @@
 				window.setTimeout(updateGame, 100);
 			}
 
-			function drawGame()
-			{
+			function drawGame(){
 				context.clearRect(0,0,canvas.width,canvas.height);
 
 				// RENDERING HAPPENS HERE
 				// DRAW THE NEXT IMAGE IN THE ARRAY
+				if(t < 16){
+					var curr = frames[t];
+					context.drawImage(curr.src,0,0);
+				}else{
+					t = 0;
+				}
+				t++;
 				window.requestAnimationFrame(drawGame);
 			}
 		}

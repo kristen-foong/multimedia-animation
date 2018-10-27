@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Illustration</title>
+    <style>
+      canvas {
+        border:1px solid black;
+      }
+    </style>
+  </head>
+  <body>
+    <center>
+      <canvas id="canv" width="1024" height="768"></canvas>
+    </center>
+    <script type="text/javascript">
+      var c = document.getElementById("canv");
+      var ctx = c.getContext("2d");
+
+      var width = 1024;
+      var height = 768;
+
+      ctx.fillStyle = 'red';
+      ctx.fillRect(0,height-100,50,100);
+
+      ctx.beginPath();
+      ctx.fillStyle = 'aqua';
+      ctx.strokeStyle = 'seagreen';
+      ctx.lineWidth = 5;
+      ctx.arc(250,250,30,0,Math.PI*2);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.fillStyle = "skyblue";
+      ctx.strokeStyle = "orange";
+      ctx.moveTo(500,300);
+      ctx.bezierCurveTo(550,400,600,100,650,200,750,350,800,300);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.beginPath();
+      var w = width*3/4;
+      var h = height*3/4;
+      var diff = 100;
+      ctx.strokeStyle = "purple";
+      ctx.lineWidth = 10;
+      ctx.moveTo(w,h);
+      ctx.quadraticCurveTo(w-diff, h-diff, w, h+diff);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.strokeStyle = "magenta";
+      ctx.fillStyle = "lavender";
+      ctx.fillRect(300,400,100,100);
+      ctx.fillStyle = "lightgreen";
+      ctx.moveTo(300,400);
+      ctx.bezierCurveTo(250,400,250,500,300,500);
+      ctx.moveTo(300,500);
+      ctx.bezierCurveTo(300,550,400,550,400,500);
+      ctx.moveTo(400,500);
+      ctx.bezierCurveTo(450,500,450,400,400,400);
+      ctx.moveTo(300,400);
+      ctx.bezierCurveTo(300,350,400,350,400,400);
+      ctx.fill();
+      ctx.stroke();
+
+    </script>
+  </body>
+</html>
