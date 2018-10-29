@@ -41,12 +41,13 @@
 				var img = new Image();
 				if(i < 10){
 					img.src = "frames/beet-0000" + i + ".png";
-					frames.push(img.src);
+					frames.push(img);
 				}else{
 					img.src = "frames/beet-000" + i + ".png";
-					frames.push(img.src);
+					frames.push(img);
 				}
 				img.onload = function(){
+					console.log("img onload");
 					// COUNT HOW MANY FRAMES HAVE BEEN LOADED, AND START THE ANIMATION WHEN ALL FRAMES HAVE BEEN LOADED
 					numLoaded++;
 					if(numLoaded == numTotal) {
@@ -68,7 +69,7 @@
 			function updateGame(){
 				// GAME AND ANIMATION LOGIC GOES HERE
 				// INCREMENT TO THE NEXT FRAME, LOOP WHEN AT THE END
-				if(t < numTotal){
+				if(t < numTotal-1){
 					t++;
 				}else{
 					t = 0;
@@ -82,10 +83,8 @@
 
 				// RENDERING HAPPENS HERE
 				// DRAW THE NEXT IMAGE IN THE ARRAY
-				var curr = new Image();
-				curr.src = frames[t];
 				console.log(frames[t]);
-				context.drawImage(curr,0,0);
+				context.drawImage(frames[t],0,0);
 				window.requestAnimationFrame(drawGame);
 			}
 		}
