@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Week 9 Demo</title>
+
+	<style type="text/css">
+		canvas
+		{
+			border:1px solid black;
+		}
+	</style>
+
+</head>
+<body>
+
+<center>
+	<canvas id="demoCanvas" width="1024" height="768"></canvas>
+</center>
+
+<script type="text/javascript">
+
+	var ANGLE = 0;
+	var LIVES = 3;
+	var LEFT = false;
+	var UP = false;
+	var RIGHT = false;
+	var DOWN = false;
+	var SPACE = false;
+	var MOUSE_X;
+	var MOUSE_Y;
+	var ANGLE;
+
+	function Ship(x,y,vx,vy,r){
+		this.x = x;
+		this.y = y;
+		this.vx = vx;
+		this.vy = vy;
+		this.r = r;
+		this.render = function(context){
+			context.save();
+			context.fillStyle = "red";
+			context.strokeStyle = "orange";
+			context.lineWidth = 5;
+			context.translate(this.x, this.y);
+			context.rotate(rotation(this.x,this.y - this.r*3,MOUSE_X, MOUSE_Y)*(Math.PI/180));
+			context.beginPath();
+			context.moveTo(0,0-this.r*3);
+			context.lineTo(this.r, 0);
+			context.lineTo(0-this.r,0);
+			context.closePath();
+			context.stroke();
+			context.fill();
+			context.restore();
+		}
+		this.move = function() {
+			this.x += this.vx;
+		}
+	}
+
+	function Missile(x,y,vx,vy,r){
+		this.x = x;
+		this.y = y;
+		this.vx = vx;
+		this.vy = vy;
+		this.r = r;
+		this.render = function(context){
+			context.fillStyle = "black";
+			context.beginPath();
+			context.arc(this.x, this.y, this.r, 0, 2*Math.PI);
+			context.fill();
+		}
+		this.move = function() {
+			this.x += this.vx;
+			this.y += this.vy;
+		}
+	}
+
+	function Asteroid(x,y,vx,vy,r){
+		this.x = x;
+		this.y = y;
+		this.vx = vx;
+		this.vy = vy;
+		this.r = r;
+		this.render = function(context){
+			context.fillStyle = "grey";
+			context.beginPath();
+			context.arc(this.x, this.y, this.r, 0, 2*Math.PI);
+			context.fill();
+		}
+		this.move = function() {
+			this.x += this.vx;
+			this.y += this.vy;
+		}
+	}
+
+	// Distance between two objects, used for collisions
+	function distance(x1, y1, x2, y2) {
+		// Calculate Euclidean distance
+		var dist = Math.sqrt(Math.pow(x1-x2,2)+Math.pow(y1-y2,2));
+		return dist;
+	}
+
+	function rotation(x1, y1, x2, y2){
+		var angle = Math.atan2(x2-x1, -(y2-y1))*(180/Math.PI);
+		return angle;
+	}
+
+	function createAsteroid(arr, canvas) {
+		arr.push(new Asteroid(
+			Math.random()*(canvas.width-60) +30,
+			Math.random()*(canvas.height-120) +60,
+			Math.random()*2-1,
+			Math.random()*2-1,
+			Math.random()*30 + 20
+		));
+	}
+
+	function wrapScreen(ship, canvas){
+		if(ship.x < 0 - ship.r){
+			ship.x = canvas.width + ship.r;
+		}
+		if(ship.x > canvas.width + ship.r){
+			ship.x = 0 - ship.r;
+		}
+		if(ship.y < 0 - ship.y - ship.r){
+			ship.y = canvas.height;
+		}
+		if(ship.y > canvas.height + ship.r){
+			ship.y = 0;
+		}
+	}
+
+	window.onload = function()
+	{
+    // Create canvas and context
+		var canvas = document.getElementById("demoCanvas");
+		var context = canvas.getContext("2d");
+
+    // Event listeners/handlers
+    document.addEventListener("keydown", function(event){
+			if(event.keyCode == 65){
+				LEFT = true;
+			}
+			if(event.keyCode == 87){
+				UP = true;
+			}
+			if(event.keyCode == 68){
+				RIGHT = true;
+			}
+			if(event.keyCode == 83){
+				DOWN = true;
+			}
+			if(event.keyCode == 32){
+				SPACE = true;
+			}
+    });
+
+    document.addEventListener("keyup", function(event){
+			if(event.keyCode == 65){
+				LEFT = false;
+			}
+			if(event.keyCode == 87){
+				UP = false;
+			}
+			if(event.keyCode == 68){
+				RIGHT = false;
+			}
+			if(event.keyCode == 83){
+				DOWN = false;
+			}
+			if(event.keyCode == 32){
+				SPACE = false;
+			}
+    });
+
+		document.addEventListener("mousemove", function(event){
+			MOUSE_X = event.clientX;
+			MOUSE_Y = event.clientY;
+		});
+
+		var numAsteroid = 10;
+		var asterArr = [];
+		for(let i = 0; i < numAsteroid; i++){
+			createAsteroid(asterArr,canvas);
+		}
+
+		var ship = new Ship(
+			canvas.width/2,
+			canvas.height/2,
+			0,
+			0,
+			20
+		);
+
+		var missile = new Missile(
+			0,
+			0,
+			5,
+			5,
+			5
+		);
+
+		main();
+
+		function main()
+		{
+			startGame();
+		}
+
+		function startGame()
+		{
+			updateGame();
+			window.requestAnimationFrame(drawGame);
+		}
+
+		function updateGame()
+		{
+			if(UP == true){
+				ship.y -= 2;
+			}
+			if(DOWN == true){
+				ship.y += 2;
+			}
+			if(LEFT == true){
+				ship.x -= 2;
+			}
+			if(RIGHT == true){
+				ship.x += 2;
+			}
+			if(SPACE == true){
+				missile.x = ship.x;
+				missile.y = ship.y;
+				missile.move();
+			}
+
+			//wrap screen
+			wrapScreen(ship,canvas);
+
+			for(let i = 0; i < numAsteroid; i++){
+					var curr = asterArr[i];
+					curr.move();
+					for(let j = 0; j < i; j++){
+						var getDist = distance(ship.x, ship.y, curr.x, curr.y);
+						if(getDist < (ship.r + curr.r)) {
+							ship.x = canvas.width/2;
+							ship.y = canvas.height/2;
+							asterArr.splice(i,1);
+							if(asterArr.length < numAsteroid){
+								createAsteroid(asterArr,canvas);
+							}
+						}
+					}
+					if(curr.x < 0 - curr.r){
+						curr.x = canvas.width + curr.r;
+					}
+					if(curr.x > canvas.width + curr.r){
+						curr.x = 0 - curr.r;
+					}
+					if(curr.y < 0 - curr.y - curr.r){
+						curr.y = canvas.height + curr.r;
+					}
+					if(curr.y > canvas.height + curr.r){
+						curr.y = 0 - curr.r;
+					}
+			}
+
+
+			// CHANGE THE NUMBER OF MILLISECONDS TO ADJUST FRAME RATE
+			window.setTimeout(updateGame, 10);
+		}
+
+		function drawGame()
+		{
+			context.clearRect(0,0,canvas.width,canvas.height);
+
+			ship.render(context);
+			missile.render(context);
+
+			for(let i = 0; i < numAsteroid; i++){
+				asterArr[i].render(context);
+			}
+
+			window.requestAnimationFrame(drawGame);
+		}
+	}// end window.onload
+
+</script>
+
+</body>
+</html>
