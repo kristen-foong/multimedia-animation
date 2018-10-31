@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Week 9 Demo</title>
+	<title>Assignment 8</title>
 
 	<style type="text/css">
 		canvas
@@ -55,6 +55,9 @@
 			context.fill();
 			context.restore();
 		}
+		this.move = function(){
+			this.y += 0.5;
+		}
 	}
 
 	function Missile(x,y,vx,vy,r){
@@ -90,7 +93,25 @@
 			context.fill();
 		}
 		this.move = function() {
+			this.vy += 0.001;
 			this.x += this.vx;
+			this.y += this.vy;
+		}
+	}
+
+	function Star(x,y,vy,r){
+		this.x = x;
+		this.y = y;
+		this.vy = vy;
+		this.r = r;
+		this.render = function(context){
+			context.fillStyle = "blue";
+			context.beginPath();
+			context.arc(this.x, this.y, this.r, 0, 2*Math.PI);
+			context.fill();
+		}
+		this.move = function(){
+			this.vy += 0.0005;
 			this.y += this.vy;
 		}
 	}
@@ -114,6 +135,15 @@
 			Math.random()*2-1,
 			Math.random()*2-1,
 			Math.random()*30 + 20
+		));
+	}
+
+	function createStar(arr, canvas){
+		arr.push(new Star(
+			Math.random()*canvas.width,
+			Math.random()*canvas.height,
+			0,
+			Math.random()*2
 		));
 	}
 
@@ -190,6 +220,12 @@
 			MOUSE_Y = event.offsetY;
 		});
 
+		var numStar = 150;
+		var starArr = [];
+		for(let i = 0; i < numStar; i++){
+			createStar(starArr, canvas);
+		}
+
 		var numAsteroid = 10;
 		var asterArr = [];
 		for(let i = 0; i < numAsteroid; i++){
@@ -225,6 +261,7 @@
 
 		function updateGame()
 		{
+			ship.move();
 			if(UP == true){
 				ship.y -= 2;
 			}
@@ -253,6 +290,12 @@
 			}
 			countDown--;
 
+			for(let i = 0; i < numStar; i++){
+				var curr = starArr[i];
+				curr.move();
+				wrapScreen(curr,canvas);
+			}
+
 			//wrap screen
 			wrapScreen(ship,canvas);
 
@@ -267,11 +310,16 @@
 						createMissile(missArr,canvas);
 						asterArr.splice(i,1);
 						createAsteroid(asterArr,canvas);
+						SCORE++;
+						if(SCORE%100 == 0 && SCORE!=0){
+							LIVES = LIVES+1;
+						}
 					}
 				}
 				for(let j = 0; j < i; j++){
 					var getDist = distance(ship.x, ship.y, curr.x, curr.y);
 					if(getDist < (ship.r + curr.r)) {
+						LIVES = LIVES-1;
 						ship.x = canvas.width/2;
 						ship.y = canvas.height/2;
 						asterArr.splice(i,1);
@@ -280,18 +328,7 @@
 						}
 					}
 				}
-				if(curr.x < 0 - curr.r){
-					curr.x = canvas.width + curr.r;
-				}
-				if(curr.x > canvas.width + curr.r){
-					curr.x = 0 - curr.r;
-				}
-				if(curr.y < 0 - curr.y - curr.r){
-					curr.y = canvas.height + curr.r;
-				}
-				if(curr.y > canvas.height + curr.r){
-					curr.y = 0 - curr.r;
-				}
+				wrapScreen(curr,canvas);
 			}
 
 			for(let i = 0; i < numMissile; i++){
@@ -310,6 +347,14 @@
 			context.fillStyle="black";
 			context.fillRect(0,0,canvas.width,canvas.height);
 			context.fillStyle="white";
+
+			context.font = "12px Courier";
+			context.fillText("LIVES: " + LIVES + " SCORE: "+ SCORE,10,20);
+			context.fillText("WASD to move, SPACE to shoot, MOUSE to aim", 700,20);
+
+			for(let i = 0; i < numStar; i++){
+				starArr[i].render(context);
+			}
 
 			ship.render(context);
 
