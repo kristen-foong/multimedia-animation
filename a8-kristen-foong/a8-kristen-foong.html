@@ -29,6 +29,9 @@
 	var MOUSE_X;
 	var MOUSE_Y;
 	var ANGLE;
+	var currMiss = 0;
+	var countDown = 0;
+	var SCORE = 0;
 
 	function Ship(x,y,vx,vy,r){
 		this.x = x;
@@ -42,18 +45,15 @@
 			context.strokeStyle = "orange";
 			context.lineWidth = 5;
 			context.translate(this.x, this.y);
-			context.rotate(rotation(this.x,this.y - this.r*3,MOUSE_X, MOUSE_Y)*(Math.PI/180));
+			context.rotate(rotation(this.x,this.y,MOUSE_X, MOUSE_Y));
 			context.beginPath();
-			context.moveTo(0,0-this.r*3);
+			context.moveTo(0,0-this.r*2.5);
 			context.lineTo(this.r, 0);
 			context.lineTo(0-this.r,0);
 			context.closePath();
 			context.stroke();
 			context.fill();
 			context.restore();
-		}
-		this.move = function() {
-			this.x += this.vx;
 		}
 	}
 
@@ -64,10 +64,12 @@
 		this.vy = vy;
 		this.r = r;
 		this.render = function(context){
-			context.fillStyle = "black";
+			context.fillStyle = "white";
+			context.save();
 			context.beginPath();
 			context.arc(this.x, this.y, this.r, 0, 2*Math.PI);
 			context.fill();
+			context.restore();
 		}
 		this.move = function() {
 			this.x += this.vx;
@@ -101,7 +103,7 @@
 	}
 
 	function rotation(x1, y1, x2, y2){
-		var angle = Math.atan2(x2-x1, -(y2-y1))*(180/Math.PI);
+		var angle = Math.atan2((y2-y1),x2-x1) + Math.PI/2;
 		return angle;
 	}
 
@@ -112,6 +114,16 @@
 			Math.random()*2-1,
 			Math.random()*2-1,
 			Math.random()*30 + 20
+		));
+	}
+
+	function createMissile(arr, canvas){
+		arr.push(new Missile(
+			-100,
+			-100,
+			0,
+			0,
+			3
 		));
 	}
 
@@ -174,8 +186,8 @@
     });
 
 		document.addEventListener("mousemove", function(event){
-			MOUSE_X = event.clientX;
-			MOUSE_Y = event.clientY;
+			MOUSE_X = event.offsetX;
+			MOUSE_Y = event.offsetY;
 		});
 
 		var numAsteroid = 10;
@@ -189,16 +201,14 @@
 			canvas.height/2,
 			0,
 			0,
-			20
+			10
 		);
 
-		var missile = new Missile(
-			0,
-			0,
-			5,
-			5,
-			5
-		);
+		var numMissile = 100;
+		var missArr = [];
+		for(let i = 0; i < numMissile; i++){
+			createMissile(missArr,canvas);
+		}
 
 		main();
 
@@ -227,41 +237,66 @@
 			if(RIGHT == true){
 				ship.x += 2;
 			}
-			if(SPACE == true){
+			if(SPACE == true && countDown <= 0){
+				countDown = 20;
+				var missileSpeed = 5;
+				var direction = rotation(ship.x,ship.y,MOUSE_X, MOUSE_Y) - Math.PI/2;
+				var missile = missArr[currMiss];
 				missile.x = ship.x;
 				missile.y = ship.y;
-				missile.move();
+				missile.vx = Math.cos(direction)*missileSpeed;
+				missile.vy = Math.sin(direction)*missileSpeed;
+				currMiss++;
+				if(currMiss >= missArr.length){
+					currMiss = 0;
+				}
 			}
+			countDown--;
 
 			//wrap screen
 			wrapScreen(ship,canvas);
 
 			for(let i = 0; i < numAsteroid; i++){
-					var curr = asterArr[i];
-					curr.move();
-					for(let j = 0; j < i; j++){
-						var getDist = distance(ship.x, ship.y, curr.x, curr.y);
-						if(getDist < (ship.r + curr.r)) {
-							ship.x = canvas.width/2;
-							ship.y = canvas.height/2;
-							asterArr.splice(i,1);
-							if(asterArr.length < numAsteroid){
-								createAsteroid(asterArr,canvas);
-							}
+				var curr = asterArr[i];
+				curr.move();
+				for(let d = 0; d < numMissile; d++){
+					var miss = missArr[d];
+					var getDist = distance(miss.x, miss.y, curr.x, curr.y);
+					if(getDist < (miss.r) + curr.r){
+						missArr.splice(d,1);
+						createMissile(missArr,canvas);
+						asterArr.splice(i,1);
+						createAsteroid(asterArr,canvas);
+					}
+				}
+				for(let j = 0; j < i; j++){
+					var getDist = distance(ship.x, ship.y, curr.x, curr.y);
+					if(getDist < (ship.r + curr.r)) {
+						ship.x = canvas.width/2;
+						ship.y = canvas.height/2;
+						asterArr.splice(i,1);
+						if(asterArr.length < numAsteroid){
+							createAsteroid(asterArr,canvas);
 						}
 					}
-					if(curr.x < 0 - curr.r){
-						curr.x = canvas.width + curr.r;
-					}
-					if(curr.x > canvas.width + curr.r){
-						curr.x = 0 - curr.r;
-					}
-					if(curr.y < 0 - curr.y - curr.r){
-						curr.y = canvas.height + curr.r;
-					}
-					if(curr.y > canvas.height + curr.r){
-						curr.y = 0 - curr.r;
-					}
+				}
+				if(curr.x < 0 - curr.r){
+					curr.x = canvas.width + curr.r;
+				}
+				if(curr.x > canvas.width + curr.r){
+					curr.x = 0 - curr.r;
+				}
+				if(curr.y < 0 - curr.y - curr.r){
+					curr.y = canvas.height + curr.r;
+				}
+				if(curr.y > canvas.height + curr.r){
+					curr.y = 0 - curr.r;
+				}
+			}
+
+			for(let i = 0; i < numMissile; i++){
+				var curr =  missArr[i];
+				curr.move();
 			}
 
 
@@ -272,12 +307,18 @@
 		function drawGame()
 		{
 			context.clearRect(0,0,canvas.width,canvas.height);
+			context.fillStyle="black";
+			context.fillRect(0,0,canvas.width,canvas.height);
+			context.fillStyle="white";
 
 			ship.render(context);
-			missile.render(context);
 
 			for(let i = 0; i < numAsteroid; i++){
 				asterArr[i].render(context);
+			}
+
+			for(let i = 0; i < numMissile; i++){
+				missArr[i].render(context);
 			}
 
 			window.requestAnimationFrame(drawGame);
