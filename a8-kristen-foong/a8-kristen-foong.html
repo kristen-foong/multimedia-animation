@@ -8,11 +8,24 @@
 		{
 			border:1px solid black;
 		}
+		h1 {
+			text-align:center;
+			font-family:Arial;
+			margin:15px;
+		}
+		h3 {
+			text-align:center;
+			text-transform:uppercase;
+			font-family:Arial;
+			font-size:15px;
+			margin:10px auto;
+		}
 	</style>
 
 </head>
 <body>
-
+<h1>Assignment 8</h1>
+<h3>Collision detection, canvas transformations, mouse input, simulation acceleration/gravity</h3>
 <center>
 	<canvas id="demoCanvas" width="1024" height="768"></canvas>
 </center>
@@ -365,6 +378,10 @@
 			for(let i = 0; i < numMissile; i++){
 				missArr[i].render(context);
 			}
+
+			context.font = "12px Courier";
+			context.fillText("LIVES: " + LIVES + " SCORE: "+ SCORE,10,20);
+			context.fillText("WASD to move, SPACE to shoot, MOUSE to aim", 700,20);
 
 			window.requestAnimationFrame(drawGame);
 		}
