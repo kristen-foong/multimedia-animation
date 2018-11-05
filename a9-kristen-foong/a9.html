@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title>Babylon Template</title>
+
+        <style>
+            html, body {
+                overflow: hidden;
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+
+            #renderCanvas {
+                width: 100%;
+                height: 100%;
+                touch-action: none;
+            }
+        </style>
+        <script src="https://cdn.babylonjs.com/cannon.js"></script>
+        <script src="https://cdn.babylonjs.com/babylon.js"></script>
+        <script src="https://preview.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
+        <script src="https://code.jquery.com/pep/0.4.3/pep.js"></script>
+    </head>
+
+   <body>
+
+    <canvas id="renderCanvas" touch-action="none"></canvas> //touch-action="none" for best results from PEP
+
+    <script>
+        var canvas = document.getElementById("renderCanvas"); // Get the canvas element
+        var engine = new BABYLON.Engine(canvas, true); // Generate the BABYLON 3D engine
+
+        /******* Add the create scene function ******/
+        var createScene = function () {
+
+            // Create the scene space
+            var scene = new BABYLON.Scene(engine);
+
+            // Add a camera to the scene and attach it to the canvas
+            var camera = new BABYLON.ArcRotateCamera("Camera", Math.PI / 2, Math.PI / 2, 10, new BABYLON.Vector3(0,0,0), scene);
+            camera.attachControl(canvas, true);
+
+            // Add lights to the scene
+            var light1 = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(1, 1, 0), scene);
+            var light2 = new BABYLON.PointLight("light2", new BABYLON.Vector3(0, 1, -1), scene);
+
+            // Add and manipulate meshes in the scene
+            var sphere = BABYLON.MeshBuilder.CreateSphere("sphere", {diameter:2}, scene);
+
+            //create sphere2
+            var sphere2 = BABYLON.MeshBuilder.CreateSphere("sphere2", {diameter:3}, scene);
+            sphere2.position = new BABYLON.Vector3(0,2,0);
+            sphere2.position.x = -3;
+            sphere2.position.y = 0;
+
+            //create pink material
+            var pinkMaterial = new BABYLON.StandardMaterial("pinkMaterial", scene);
+            sphere2.material = pinkMaterial;
+            pinkMaterial.diffuseColor = new BABYLON.Color3(1,0.3,0.6);
+            pinkMaterial.specularColor = new BABYLON.Color3(1,1,1);
+            pinkMaterial.specularPower = 100;
+            scene.ambientColor = new BABYLON.Color3(1,1,1);
+            pinkMaterial.ambientColor = new BABYLON.Color3(0.1,0.4,0.3);
+            pinkMaterial.emmissiveColor = new BABYLON.Color3(0.7,0.3,0.1);
+
+            var brickMaterial = new  BABYLON.StandardMaterial("brickMaterial",scene);
+            brickMaterial.diffuseTexture = new BABYLON.Texture("pexels-photo-761142.jpeg", scene); //captures the texture itself and brightens
+            brickMaterial.specularTexture = new BABYLON.Texture("pexels-photo-761142.jpeg", scene); // captures the shadows in Texture
+            //together they "brighten" rather than white-out the highlighted area
+            sphere.material = brickMaterial;
+
+            //create ground
+            var ground = BABYLON.MeshBuilder.CreateGround("ground",{height:100,width:100},scene);
+            ground.position.y = -5; //set ground position
+
+            //create grass Material
+            var grassMaterial = new BABYLON.StandardMaterial("grassMaterial",scene);
+            grassMaterial.diffuseTexture = new BABYLON.Texture("pexels-photo-413195.jpeg",scene);
+            //set it to repeat 4 times
+            grassMaterial.diffuseTexture.uScale = 4;
+            grassMaterial.diffuseTexture.vScale = 4;
+            ground.material = grassMaterial;
+
+            //change bg Color
+            scene.clearColor = new BABYLON.Color3(0.8,0.9,1);
+
+            //create sphere 3
+            var sphere3 = BABYLON.MeshBuilder.CreateSphere("sphere3", {diameter:2}, scene);
+            sphere3.position = new BABYLON.Vector3(4,0,0);
+            var blueMaterial = new BABYLON.StandardMaterial("blueMaterial",scene);
+            sphere3.material = blueMaterial;
+            blueMaterial.diffuseColor = new BABYLON.Color3(0,0,1);
+
+            // y velocity
+            var vy = 0.05;
+
+            //physics plugin
+            var physicsPlugin = new BABYLON.CannonJSPlugin();
+            var gravityVector = new BABYLON.Vector3(0,-9.81,0);
+            scene.enablePhysics(gravityVector,physicsPlugin);
+
+            //set sphere 2 as physics impostor
+            sphere2.physicsImpostor = new BABYLON.PhysicsImpostor(sphere2,BABYLON.PhysicsImpostor.SphereImpostor, { mass: 1, restitution: 0.8 }, scene);
+            //create impostor for ground
+            ground.physicsImpostor = new BABYLON.PhysicsImpostor(ground,BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0.9 }, scene);
+            //set impulse
+            sphere2.physicsImpostor.applyImpulse(new BABYLON.Vector3(1,2,0),sphere2.getAbsolutePosition());
+            //sphere 1 impostor
+            sphere.physicsImpostor = new BABYLON.PhysicsImpostor(sphere,BABYLON.PhysicsImpostor.SphereImpostor, { mass: 0.6, restitution: 0.8 }, scene);
+            sphere.physicsImpostor.applyImpulse(new BABYLON.Vector3(-1,2,0),sphere.getAbsolutePosition());
+
+            scene.registerAfterRender(function () {
+              //Your animation code here
+              sphere3.position.y -= vy;
+              if(sphere3.intersectsMesh(ground,true)){
+                sphere3.material.diffuseColor = new BABYLON.Color3(1,0,0);
+                sphere3.position.y = sphere3.position.y + 2*vy;
+                vy = -vy;
+              }
+
+            });
+
+            window.addEventListener("click", function () {
+              var pickResult = scene.pick(scene.pointerX, scene.pointerY);
+              pickResult.pickedMesh.material.diffuseColor = new BABYLON.Color3(0, 1, 0);
+              var picked = pickResult.pickedMesh;
+              var pickedY = pickedResult.pickedPoint.y;
+              var pickedX = pickedResult.pickedPoint.x;
+              picked.physicsImpostor.applyImpulse(new BABYLON.Vector3(0,5,-3),picked.getAbsolutePosition());
+
+            });
+
+            return scene;
+        };
+        /******* End of the create scene function ******/
+
+        var scene = createScene(); //Call the createScene function
+
+        // Register a render loop to repeatedly render the scene
+        engine.runRenderLoop(function () {
+                scene.render();
+        });
+
+        // Watch for browser/canvas resize events
+        window.addEventListener("resize", function () {
+                engine.resize();
+        });
+    </script>
+
+   </body>
+
+</html>
