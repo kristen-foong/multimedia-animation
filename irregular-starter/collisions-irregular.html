@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Demo</title>
+
+	<style type="text/css">
+		canvas
+		{
+			border:1px solid black;
+		}
+	</style>
+
+</head>
+<body>
+
+<canvas id="demoCanvas" width="1024" height="768"></canvas>
+
+<script src="Irregular.js"></script>
+<script src="Point.js"></script>
+
+<script type="text/javascript">
+
+	window.onload = function()
+	{
+		var canvas = document.getElementById("demoCanvas");
+		var context = canvas.getContext("2d");
+
+		// Create randomized shapes using Irregular class
+		var shapes = [];
+		var numShapes = 3;
+
+		for(var i=0;i<numShapes;i++)
+		{
+			shapes.push(new Irregular(3));
+		}
+
+		// Create randomized points
+		var points = [];
+		var numPoints = 30;
+
+		for(var i=0;i<numPoints;i++)
+		{
+			points.push(new Point());
+		}
+
+		main();
+
+		function main()
+		{
+			startGame();
+		}
+
+		function startGame()
+		{
+			updateGame();
+			window.requestAnimationFrame(drawGame);
+		}
+
+		function updateGame()
+		{
+			// Move points
+			for(var i=0;i<numPoints;i++)
+			{
+				points[i].move();
+			}
+
+			// CHANGE THE NUMBER OF MILLISECONDS TO ADJUST FRAME RATE
+			window.setTimeout(updateGame, 10);
+		}
+
+		function drawGame()
+		{
+			context.clearRect(0,0,canvas.width,canvas.height);
+
+			// RENDERING HAPPENS HERE
+
+			// Render random shapes
+			for(var i=0;i<numShapes;i++)
+			{
+				shapes[i].render(context);
+			}
+
+			// Render points
+			for(var i=0;i<numPoints;i++)
+			{
+				points[i].render(context);
+			}
+
+			window.requestAnimationFrame(drawGame);
+		}
+	}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Rectangle Collision</title>
+
+	<style type="text/css">
+		canvas
+		{
+			border:1px solid black;
+		}
+	</style>
+
+</head>
+<body>
+
+<canvas id="demoCanvas" width="1024" height="768"></canvas>
+
+<!-- Square Class -->
+<script src="Square.js"></script>
+
+<script type="text/javascript">
+
+	window.onload = function()
+	{
+		var canvas = document.getElementById("demoCanvas");
+		var context = canvas.getContext("2d");
+
+		// Create 50 squares
+		var squares = [];
+		var numSquares = 50;
+
+		for(var i=0;i<numSquares;i++)
+		{
+			squares.push(new Square());
+		}
+
+		main();
+
+		function main()
+		{
+			startGame();
+		}
+
+		function startGame()
+		{
+			updateGame();
+			window.requestAnimationFrame(drawGame);
+		}
+
+		function updateGame()
+		{
+
+			for(var i=0;i<numSquares;i++)
+			{
+				// Move every square
+				squares[i].move();
+
+				// Check every other square for collisions
+				for(var j=0;j<i;j++)
+				{
+					squares[i].collision(squares[j]);
+				}
+			}
+
+			// CHANGE THE NUMBER OF MILLISECONDS TO ADJUST FRAME RATE
+			window.setTimeout(updateGame, 10);
+		}
+
+		function drawGame()
+		{
+			context.clearRect(0,0,canvas.width,canvas.height);
+
+			// RENDERING HAPPENS HERE
+			for(var i=0;i<numSquares;i++)
+			{
+				squares[i].render(context);
+			}
+
+			window.requestAnimationFrame(drawGame);
+		}
+	}
+
+</script>
+
+</body>
+</html>
