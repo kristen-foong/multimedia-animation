@@ -31,6 +31,14 @@ function Point()
 	this.collision = function(context)
 	{
 		// TODO collision when arrive at point where something has been drawn already
-
+		//get pixel data that has been drawn to canvas
+		var pixelData = context.getImageData(this.x, this.y, 1,1).data;
+		//pixelData gets back rgba values (r,g,b,a) where a is transparency
+		if(pixelData[3] != 0){
+			//collision occurs
+			this.vx = 0;
+			this.vy = 0;
+			this.color = "yellow";
+		}
 	}
 }

@@ -128,9 +128,9 @@
               var pickResult = scene.pick(scene.pointerX, scene.pointerY);
               pickResult.pickedMesh.material.diffuseColor = new BABYLON.Color3(0, 1, 0);
               var picked = pickResult.pickedMesh;
-              var pickedY = pickedResult.pickedPoint.y;
-              var pickedX = pickedResult.pickedPoint.x;
-              picked.physicsImpostor.applyImpulse(new BABYLON.Vector3(0,5,-3),picked.getAbsolutePosition());
+              if(pickResult.hit){
+                picked.physicsImpostor.applyImpulse(new BABYLON.Vector3(0,7,-3),pickResult.pickedPoint);
+              }
 
             });
 
